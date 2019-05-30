@@ -2,15 +2,26 @@
 # Devuelve un booleano en base a si encontro el registro y lo actualizo o no.
 
 import datetime
+import mysql.connector
 
-from practico_03.ejercicio_01 import reset_tabla
-from practico_03.ejercicio_02 import agregar_persona
-from practico_03.ejercicio_04 import buscar_persona
+from ejercicio_01 import reset_tabla
+from ejercicio_02 import agregar_persona
+from ejercicio_04 import buscar_persona
 
 
 def actualizar_persona(id_persona, nombre, nacimiento, dni, altura):
-    return False
-
+    connection = mysql.connector.connect(user="Bruno", password="12345", host="localhost", database = "brunobd")
+    cursor = connection.cursor()
+    cSQL = "SELECT * FROM PERSONA WHERE IdPersona = %s"
+    cursor.execute(cSQL, (id_persona, ))
+    results = cursor.fetchall()
+    if len(results) > 0:
+        cSQL = "UPDATE persona SET Nombre = %s, FechaNacimiento = %s, DNI = %s, Altura = %s WHERE IdPersona = %s"
+        cursor.execute(cSQL, (nombre, nacimiento, dni, altura, id_persona))
+        connection.commit()
+        return True
+    else:
+        return False
 
 @reset_tabla
 def pruebas():

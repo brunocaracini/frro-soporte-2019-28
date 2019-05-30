@@ -15,14 +15,28 @@
 # - False en caso de no cumplir con alguna validacion.
 
 import datetime
+import mysql.connector
 
-from practico_03.ejercicio_02 import agregar_persona
-from practico_03.ejercicio_06 import reset_tabla
-from practico_03.ejercicio_07 import agregar_peso
-
+from ejercicio_02 import agregar_persona
+from ejercicio_06 import reset_tabla
+from ejercicio_07 import agregar_peso
+from ejercicio_04 import buscar_persona
 
 def listar_pesos(id_persona):
-    return []
+    if buscar_persona(id_persona):
+        connection = mysql.connector.connect(user="Bruno", password="12345", host="localhost", database = "brunobd")
+        cursor = connection.cursor()
+        cSQL = "SELECT Fecha, Peso from persona_peso WHERE IdPersona = %s"
+        cursor.execute(cSQL, (id_persona, ))
+        results = cursor.fetchall()
+        if len(results) > 0:
+            for result in results:
+                print(result)
+            return results
+        else:
+            return False
+    else:
+        return False
 
 
 @reset_tabla
@@ -32,8 +46,8 @@ def pruebas():
     agregar_peso(id_juan, datetime.datetime(2018, 6, 1), 85)
     pesos_juan = listar_pesos(id_juan)
     pesos_esperados = [
-        ('2018-05-01', 80),
-        ('2018-06-01', 85),
+        (datetime.datetime(2018, 5, 1, 0, 0), 80),
+        (datetime.datetime(2018, 6, 1, 0, 0), 85)
     ]
     assert pesos_juan == pesos_esperados
     # id incorrecto
