@@ -35,7 +35,6 @@ class NegocioSocio(object):
         return self.datos.todos()
 
     def alta(self, socio):
-        print('alta funciona')
         if (self.regla_1(socio) and self.regla_2(socio) and self.regla_3()):
             self.datos.alta(socio)
             return True
